@@ -1,0 +1,35 @@
+feature_engineering:
+  correlation_threshold: 0.8
+  variance_threshold: 0.01
+  polynomial_degree: 2
+  log_transform_skew_threshold: 0.75
+  binning:
+    enabled: true
+    num_bins: 10
+    strategy: "quantile" # "uniform", "quantile", "kmeans"
+  encoding:
+    categorical_threshold: 10 # Number of unique values to consider a categorical feature
+    default_encoding: "onehot" # "onehot", "label", "target"
+  interaction_features:
+    enabled: true
+    pairs:
+      - ["feature1", "feature2"] # Example, replace with actual feature names
+      - ["feature3", "feature4"]
+  feature_selection:
+    enabled: true
+    model_based:
+      enabled: true
+      num_features: 20
+
+training:
+  test_size: 0.2
+  random_state: 42
+  model:
+    classification:
+      name: "RandomForestClassifier"
+      params:
+        n_estimators: 100
+    regression:
+      name: "RandomForestRegressor"
+      params:
+        n_estimators: 100
