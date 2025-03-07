@@ -118,7 +118,7 @@ Contributing
 Contributions are welcome! Please feel free to submit a pull request or open an issue.
 
 License
-MIT License (Add a LICENSE file)
+MIT License  https://github.com/Chandrakanthur/AutoMLForge/commit/94c0e652ee2fd2f390bfa15788176684d72c3424file
 
 Author
 M Chandrakanth Urs
