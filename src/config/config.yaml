@@ -20,3 +20,16 @@ feature_engineering:
     model_based:
       enabled: true
       num_features: 20
+
+training:
+  test_size: 0.2
+  random_state: 42
+  model:
+    classification:
+      name: "RandomForestClassifier"
+      params:
+        n_estimators: 100
+    regression:
+      name: "RandomForestRegressor"
+      params:
+        n_estimators: 100
