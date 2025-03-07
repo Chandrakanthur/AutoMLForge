@@ -23,7 +23,7 @@ AutoMLForge is a Python-based automated machine learning (AutoML) pipeline desig
 1.  Clone the repository:
 
     ```bash
-    git clone [https://github.com/yourusername/AutoMLForge.git](https://www.google.com/search?q=https://github.com/yourusername/AutoMLForge.git)
+    git clone https://github.com/yourusername/AutoMLForge.git
     cd AutoMLForge
     ```
 
