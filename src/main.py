@@ -10,6 +10,11 @@ import pandas.api.types as ptypes
 import yaml
 from tpot import TPOTClassifier, TPOTRegressor
 import stopit
+import joblib
+from sklearn.pipeline import Pipeline
+from generate_script import generate_predict_script
+# Global flag to track if preprocess_data was called
+preprocess_data_called = False
 
 def main():
     parser = argparse.ArgumentParser(description="AutoMLForge: Automated ML Pipeline")
@@ -17,6 +22,7 @@ def main():
     parser.add_argument("--target", "-t", help="Name of the target column.")
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose output.")
     parser.add_argument("--output", "-o", help="Path to the output directory.")
+    parser.add_argument("--download", action="store_true", help="Download the trained model and pipeline.")
     args = parser.parse_args()
 
     try:
@@ -38,7 +44,6 @@ def main():
 
         validate_csv_file(args.data, logger)
         data = pd.read_csv(args.data)
-        data = preprocess_data(data, args.target, logger)
 
         if args.target:
             target_column = args.target
@@ -50,12 +55,25 @@ def main():
             target_column = None
 
         if target_column:
+
             X = data.drop(target_column, axis=1)
             y = data[target_column]
 
             with open("config/config.yaml", "r") as file:
                 config = yaml.safe_load(file)
             training_config = config["training"]
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                                test_size=training_config["test_size"],
+                                                                random_state=training_config["random_state"])
+
+            # Track preprocess_data call
+            global preprocess_data_called
+            preprocess_data_called = True
+            data = preprocess_data(data, target_column, logger)
+
+            X = data.drop(target_column, axis=1)
+            y = data[target_column]
 
             X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                                 test_size=training_config["test_size"],
@@ -69,7 +87,7 @@ def main():
 
             try:
                 with stopit.threading_timeoutable(default="timeout"):
-                    tpot.fit(X_train, y_train, timeout=600)  # Timeout set to 600 seconds (10 minutes)
+                    tpot.fit(X_train, y_train, timeout=600)
                 logger.info(f"TPOT best pipeline: {tpot.fitted_pipeline_}")
             except stopit.TimeoutException:
                 logger.warning("TPOT training timed out.")
@@ -88,13 +106,8 @@ def main():
                 logger.info(f"Accuracy: {accuracy}")
                 print(f"Accuracy: {accuracy}")
 
-        else:
-            logger.warning("Target column not specified or found. Model training skipped.")
-            print("Target column not specified or found. Model training skipped.")
-
-    except Exception as e:
-        logging.error(f"Pipeline failed: {e}")
-        print(f"Pipeline failed: {e}")
-
-if __name__ == "__main__":
-    main()
+            # Ask user for satisfaction and generate predict.py
+            satisfaction = input("Are you satisfied with the model's performance? (yes/no): ").lower()
+            if satisfaction == "yes":
+                generate_predict_script(args.output, preprocess_data_called)
+                logger.info(f"predict.py saved in {o}")
