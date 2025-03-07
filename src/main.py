@@ -3,7 +3,7 @@ import os
 import logging
 import pandas as pd
 from data_validator import validate_csv_file
-from data_preprocessing import preprocess_data
+from data_preprocessing.data_pre_processing import preprocess_data # Corrected import
 
 def main():
     parser = argparse.ArgumentParser(description="AutoMLForge: Automated ML Pipeline")
@@ -37,8 +37,6 @@ def main():
         logger.info("Data loaded and preprocessed successfully.")
         print("Data loaded and preprocessed successfully:")
         print(data.head())
-
-       
 
     except Exception as e:
         logging.error(f"Pipeline failed: {e}")
