@@ -1,8 +1,9 @@
 import argparse
 import os
 import logging
+import pandas as pd
 from data_validator import validate_csv_file
-from data_preprocessing import load_and_preprocess_data
+from data_preprocessing import preprocess_data
 
 def main():
     parser = argparse.ArgumentParser(description="AutoMLForge: Automated ML Pipeline")
@@ -30,13 +31,14 @@ def main():
         logger.info("Starting AutoMLForge pipeline.")
 
         validate_csv_file(args.data, logger)
-        data = load_and_preprocess_data(args.data, args.target, logger)
+        data = pd.read_csv(args.data) #Load the data after validation.
+        data = preprocess_data(data, args.target, logger)
 
         logger.info("Data loaded and preprocessed successfully.")
         print("Data loaded and preprocessed successfully:")
         print(data.head())
 
-        # Further pipeline steps (model training, evaluation, etc.) will be added here
+       
 
     except Exception as e:
         logging.error(f"Pipeline failed: {e}")
